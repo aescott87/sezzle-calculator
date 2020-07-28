@@ -1,26 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+
+  state = {
+    expression: ''
+  }
+
+  handleChange = (event) => {
+    console.log('Entering calculation');
+    this.setState({
+      expression: event.target.value
+    });
+  }
+
+  handleCalculate = (event) => {
+    event.preventDefault();
+    console.log('Starting calculation');
+    Axios.post('/calculation', this.state)
+    this.setState({
+      expression: ''
+    });
+  }
+  
+  render() {
+    return (
+      <>
+        <div className="App">
+          <h1>Sezzle Calculator</h1>
+          <input type="text" value={this.state.expression} onChange={(event) => this.handleChange(event)} />
+          <button onClick={(event) => this.handleCalculate(event)}>Submit</button>
+          <div className="previousCalcs">
+            <h2>Previous Calculations:</h2>
+          </div>
+        </div>
+      </>
+    );
+  }
 }
 
 export default App;
