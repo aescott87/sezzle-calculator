@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import axios from 'axios';
 
 class App extends Component {
 
@@ -17,12 +18,12 @@ class App extends Component {
   handleCalculate = (event) => {
     event.preventDefault();
     console.log('Starting calculation');
-    Axios.post('/calculation', this.state)
+    axios.post('/calculation', this.state)
     this.setState({
       expression: ''
     });
   }
-  
+
   render() {
     return (
       <>
