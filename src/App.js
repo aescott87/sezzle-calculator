@@ -5,27 +5,32 @@ import axios from 'axios';
 class App extends Component {
 
   state = {
-    expression: ''
+    expression: '',
+    solvedExpressions: [],
   }
 
   componentDidMount() {
-    console.log('in componentWillUpdate');
-    
+    // Set up Event Source
     const sseSource = new EventSource('http://localhost:5000/calculation/event-stream');
-    console.log(sseSource);
-    sseSource.addEventListener('ping', (e) => {
-      console.log('ping', e);
-    });
-    sseSource.onmessage = function(e) {
+    sseSource.onmessage = (e) => {
       console.log('onmessage', e);
-      const messageData = e.data;
-      console.log('data', messageData);
-    };
-    sseSource.onerror = function(e) {
-      console.log('onerror', e);
-    }
-    sseSource.onopen = function(e) {
-      console.log('onopen', e);
+      const messageData = JSON.parse(e.data);
+      // Verify that the message data is an array
+      // If so, we will add the new data to state
+      if (Array.isArray(messageData)) {
+        this.setState({
+          solvedExpressions: this.state.solvedExpressions.concat(messageData)
+        });
+      }
+      // Verify if the array in state is longer than 10
+      // If so, we will remove the first index of the array
+      if(this.state.solvedExpressions.length > 10) {
+        this.setState({
+          solvedExpressions: this.state.solvedExpressions.shift()
+        });
+      }
+      console.log(this.state.solvedExpressions);
+      
     }
   }
 
@@ -53,6 +58,13 @@ class App extends Component {
           <button onClick={(event) => this.handleCalculate(event)}>Submit</button>
           <div className="previousCalcs">
             <h2>Last 10 Calculations:</h2>
+            <ul>
+              {this.state.solvedExpressions.map((expression) => {
+                return (
+                  <li>{expression}</li>
+                )
+              })}
+            </ul>
           </div>
         </div>
       </>
