@@ -29,8 +29,7 @@ class App extends Component {
           solvedExpressions: this.state.solvedExpressions.shift()
         });
       }
-      console.log(this.state.solvedExpressions);
-      
+      console.log(this.state.solvedExpressions); 
     }
   }
 
